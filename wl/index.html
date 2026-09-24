@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WL Emergency Dashboard</title>
+    <style>
+        body { background:#0d0d0d; color:white; font-family:Arial; display:flex; }
+        #sidebar { width:250px; background:#111; padding:20px; }
+        #content { flex:1; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
+        .player {
+            background:#222; padding:10px; border-radius:10px;
+            width:300px;
+        }
+        .player img {
+            width:100%; border-radius:8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>WL Emergency</h2>
+        <p>Live Monitoring</p>
+    </div>
+
+    <div id="content"></div>
+
+    <script>
+        async function loadPlayers() {
+            const res = await fetch("https://YOUR_API_URL/players");
+            const data = await res.json();
+
+            const container = document.getElementById("content");
+            container.innerHTML = "";
+
+            Object.values(data).forEach(p => {
+                const div = document.createElement("div");
+                div.className = "player";
+                div.innerHTML = `
+                    <h3>${p.username} (${p.userid})</h3>
+                    <img src="data:image/png;base64,${p.frame}">
+                    <p>Last Update: ${new Date(p.lastUpdate).toLocaleTimeString()}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        setInterval(loadPlayers, 1000);
+    </script>
+</body>
+</html>
